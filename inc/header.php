@@ -25,6 +25,12 @@
   input[type="submit"], input[type="file"]{
     cursor: pointer;
   }
+  .success{
+      color:green; display: block; padding: 10px;  font-size: 18px;
+  }
+  .error{
+      color:red; display: block; padding: 10px;  font-size: 18px;
+  }
   </style>
 </head>
 <body>
