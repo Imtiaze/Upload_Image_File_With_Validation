@@ -33,8 +33,8 @@ class Database{
 
   public function select($data) {
     $select_row = $this->link->query($data) or die($this->link->error.__LINE__);
-    if($select_row->num_row > 0){
-      return $result;
+    if($select_row->num_rows > 0){
+      return $select_row;
     }
     else{
       return false;
