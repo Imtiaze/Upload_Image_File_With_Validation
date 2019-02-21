@@ -15,10 +15,17 @@ $db = new Database();
       $file_size = $_FILES['image']['size'];
       $file_path = $_FILES['image']['tmp_name'];
 
-      $store_folder = 'uploads/';
-      move_uploaded_file($file_path, $store_folder.$file_name);
+      $div = explode('.', $file_name);
+      $file_extension = end($div);
+      $unique_image = substr(md5(time()), 0,10).'.'.$file_extension;
 
-      $sql = "INSERT INTO tbl_image(image) VALUES('$file_name')";
+      $uploaded_image = 'uploads/'.$unique_image;
+
+
+
+      move_uploaded_file($file_path, $uploaded_image);
+
+      $sql = "INSERT INTO tbl_image(image) VALUES('$uploaded_image')";
       $insert = $db->insert($sql);
       if($insert){
         echo "<span class='success'>File upload successfull.</span>";
