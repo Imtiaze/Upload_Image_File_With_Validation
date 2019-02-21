@@ -16,7 +16,7 @@ $db = new Database();
 
       $div = explode('.', $file_name);
       $file_extension = strtolower(end($div));
-      $unique_image = substr(md5(time()), 0,10).'.'.$file_extension;
+      $unique_image   = substr(md5(time()), 0,10).'.'.$file_extension;
       $uploaded_image = 'uploads/'.$unique_image;
 
       if(empty($file_name)) {
@@ -30,7 +30,6 @@ $db = new Database();
       }
       else {
         move_uploaded_file($file_path, $uploaded_image);
-
         $sql = "INSERT INTO tbl_image(image) VALUES('$uploaded_image')";
         $insert = $db->insert($sql);
         if($insert){
@@ -54,17 +53,56 @@ $db = new Database();
         </tr>
       </table>
     </form>
-    <?php
-    $query = "SELECT * FROM tbl_image ORDER BY id DESC LIMIT 1";
-    $select=$db->select($query);
-    if($select){
-      while($image = $select->fetch_assoc()){
-        ?>
-        <img src="<?php echo $image['image']; ?>" height="200px" width="200px"alt="">
-        <?php
+    <table style="margin-top:20px;">
+      <tr>
+        <th width="30%">serial</th>
+        <th width="30%">Image</th>
+        <th width="30%">Action</th>
+      </tr>
+
+      <!-- delete image from server and database -->
+      <?php
+      if (isset($_GET['delete'])) {
+        $id       = $_GET['delete'];
+        $query    = "SELECT * FROM tbl_image WHERE id='$id'";
+        $getImage = $db->select($query);
+        if($getImage){
+          while($imageData = $getImage->fetch_object()) {
+            $deleteImage = $imageData->image;
+            unlink($deleteImage);
+          }
+        }
+
+        $query  = "DELETE FROM tbl_image WHERE id='$id'";
+        $result = $db->delete($query);
+        if($result){
+          echo "<span class='success'>Image deleted successfully</span>";
+        }
+        else {
+          echo "<span class='error'>Image not deleted</span>";
+        }
       }
-    }
-    ?>
+      ?>
+
+      <!-- showing all the image -->
+      <?php
+      $query = "SELECT * FROM tbl_image ORDER BY id DESC";
+      $select=$db->select($query);
+      if($select){
+        $i = 0;
+        while($image = $select->fetch_assoc()){
+          $i++;
+          ?>
+          <tr>
+            <td style="text-align:center;"><?php echo $i; ?></td>
+            <td style="text-align:center;"><img src="<?php echo $image['image']; ?>" height="75px" width="100px"alt=""></td>
+            <td style="text-align:center;"> <a href="?delete=<?php echo $image['id']; ?>">Delete</a> </td>
+          </tr>
+          <?php
+        }
+      }
+      ?>
+    </table>
   </div>
 </section>
 
